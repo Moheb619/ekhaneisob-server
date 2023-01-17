@@ -5,9 +5,15 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import bodyParser from "body-parser";
 
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+
 // import routes start
 import authRoute from "./routes/auth.js";
 import usersRouter from "./routes/users.js";
+import productsRouter from "./routes/products.js";
+import categoriesRouter from "./routes/categories.js";
 // import routes end
 
 // Initialize express to app
@@ -16,6 +22,7 @@ const app = express();
 // Config environment
 dotenv.config();
 mongoose.set("strictQuery", true);
+// mongoose.set("strictPopulate", false);
 const connect = async () => {
   try {
     await mongoose.connect(process.env.MONGO);
@@ -37,9 +44,23 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 //middlewares use end
 
+// File Upload Start
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads");
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + "-" + Date.now() + path.extname(file.originalname));
+  },
+});
+const upload = multer({ storage: storage });
+// File Upload End
+
 // All routes start
 app.use("/api/auth", authRoute);
 app.use("/api/users", usersRouter);
+app.use("/api/products", productsRouter);
+app.use("/api/categories", categoriesRouter);
 // All routes end
 
 app.use((err, req, res, next) => {

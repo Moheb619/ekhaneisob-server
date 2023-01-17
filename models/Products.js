@@ -6,25 +6,21 @@ const ProductsSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    img1: {
-      data: Buffer,
-      contentType: String,
-    },
-    img2: {
-      data: Buffer,
-      contentType: String,
-    },
-    img3: {
-      data: Buffer,
-      contentType: String,
+    img: {
+      type: [String],
+      required: true,
     },
     desc: {
       type: String,
       required: true,
     },
-    category_id: {
-      type: mongoose.Types.ObjectId,
-      ref: "categories",
+    category: {
+      type: String,
+      required: true,
+    },
+    sub_category: {
+      type: String,
+      required: true,
     },
     price: {
       type: Number,

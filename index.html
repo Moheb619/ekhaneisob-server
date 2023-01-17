@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div></div>
+    <form id="form" style="display: flex; flex-direction: column; width: 500px; margin: 0 auto">
+      <input type="text" name="myName" placeholder="Name" id="pname" />
+      <input class="choose-file-btn" type="file" name="myImage" placeholder="Image" id="pimage" multiple />
+      <input type="text" name="myDesc" placeholder="Description" id="pdesc" />
+      <input type="text" name="myCategoryId" placeholder="Category" id="pcategory" />
+      <input type="text" name="mySubCategoryId" placeholder="SubCategory" id="psubcategory" />
+      <input type="number" name="myPrice" placeholder="Price" id="pprice" />
+      <input type="checkbox" name="myFeature" placeholder="Feature" id="pfeature" />
+      <button type="submit">Submit</button>
+    </form>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
+      integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+
+    <script>
+      var da;
+      fetch("http://localhost:5000/api/products/get-products", { method: "GET" })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          document.querySelector("div").append(data[0].name);
+        });
+      const form = document.querySelector("form");
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        var formData = new FormData();
+        var name = document.getElementById("pname").value;
+        var img = document.getElementById("pimage");
+        var desc = document.getElementById("pdesc").value;
+        var category = document.getElementById("pcategory").value;
+        var sub_category = document.getElementById("psubcategory").value;
+        var price = document.getElementById("pprice").value;
+        var feature = document.getElementById("pfeature");
+
+        formData.append("name", name);
+        for (let i = 0; i < img.files.length; i++) {
+          formData.append("img", img.files[i]);
+        }
+        formData.append("desc", desc);
+        formData.append("category", category);
+        formData.append("sub_category", sub_category);
+        formData.append("price", price);
+        formData.append("feature", feature.checked);
+
+        fetch("http://localhost:5000/api/products/create-product", { method: "POST", body: formData })
+          .then((res) => res.json())
+          .then((data) => console.log(data));
+      });
+    </script>
+  </body>
+</html>
