@@ -14,13 +14,13 @@ const ProductsSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    Color: {
+    color: {
       type: [String],
     },
-    Size: {
+    size: {
       type: [String],
     },
-    Quantity: {
+    quantity: {
       type: Number,
       required: true,
     },

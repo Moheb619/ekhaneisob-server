@@ -12,8 +12,11 @@
       <input type="text" name="myName" placeholder="Name" id="pname" />
       <input class="choose-file-btn" type="file" name="myImage" placeholder="Image" id="pimage" multiple />
       <input type="text" name="myDesc" placeholder="Description" id="pdesc" />
-      <input type="text" name="myCategoryId" placeholder="Category" id="pcategory" />
-      <input type="text" name="mySubCategoryId" placeholder="SubCategory" id="psubcategory" />
+      <input type="text" name="myColor" placeholder="Color" id="pcolor" />
+      <input type="text" name="mySize" placeholder="Size" id="psize" />
+      <input type="number" name="myQuantity" placeholder="Quantity" id="pquantity" />
+      <input type="text" name="myCategory" placeholder="Category" id="pcategory" />
+      <input type="text" name="mySubCategory" placeholder="SubCategory" id="psubcategory" />
       <input type="number" name="myPrice" placeholder="Price" id="pprice" />
       <input type="checkbox" name="myFeature" placeholder="Feature" id="pfeature" />
       <button type="submit">Submit</button>
@@ -44,6 +47,9 @@
         var desc = document.getElementById("pdesc").value;
         var category = document.getElementById("pcategory").value;
         var sub_category = document.getElementById("psubcategory").value;
+        var color = document.getElementById("pcolor").value;
+        var size = document.getElementById("psize").value;
+        var quantity = document.getElementById("pquantity").value;
         var price = document.getElementById("pprice").value;
         var feature = document.getElementById("pfeature");
 
@@ -54,6 +60,11 @@
         formData.append("desc", desc);
         formData.append("category", category);
         formData.append("sub_category", sub_category);
+        const colorArray = color.split(",");
+        formData.append("color", colorArray);
+        const sizeArray = size.split(",");
+        formData.append("size", sizeArray);
+        formData.append("quantity", quantity);
         formData.append("price", price);
         formData.append("feature", feature.checked);
 

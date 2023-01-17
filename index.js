@@ -8,6 +8,7 @@ import bodyParser from "body-parser";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import { fileURLToPath } from "url";
 
 // import routes start
 import authRoute from "./routes/auth.js";
@@ -18,6 +19,10 @@ import categoriesRouter from "./routes/categories.js";
 
 // Initialize express to app
 const app = express();
+
+// Config Public Folder
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Config environment
 dotenv.config();
@@ -37,6 +42,7 @@ mongoose.connection.on("disconnected", () => {
 });
 
 //middlewares use start
+app.use(express.static(__dirname + "/public/"));
 app.use(cors());
 app.use(cookieParser());
 app.use(express.json());
