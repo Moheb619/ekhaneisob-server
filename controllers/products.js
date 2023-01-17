@@ -29,3 +29,12 @@ export const getProducts = async (req, res, next) => {
     next(err);
   }
 };
+export const getCategorizedProducts = async (req, res, next) => {
+  try {
+    const categorizedProducts = await Products.find({ category: req.query.category, sub_category: req.query.sub_category });
+    console.log(categorizedProducts);
+    res.status(200).json(categorizedProducts);
+  } catch (err) {
+    next(err);
+  }
+};
