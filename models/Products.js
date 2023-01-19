@@ -10,15 +10,17 @@ const ProductsSchema = new mongoose.Schema(
       type: [String],
       required: true,
     },
-    desc: {
+    short_desc: {
       type: String,
       required: true,
     },
-    color: {
-      type: [String],
+    full_desc: {
+      type: String,
+      required: true,
     },
-    size: {
-      type: [String],
+    product_more_details: {
+      type: Object,
+      required: true,
     },
     quantity: {
       type: Number,
@@ -39,6 +41,10 @@ const ProductsSchema = new mongoose.Schema(
     featured: {
       type: Boolean,
       default: false,
+    },
+    discount: {
+      type: Number,
+      default: 0,
     },
   },
   { timestamps: true }

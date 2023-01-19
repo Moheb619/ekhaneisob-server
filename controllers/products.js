@@ -2,16 +2,29 @@ import Category from "../models/Category.js";
 import Products from "../models/Products.js";
 
 export const createProduct = async (req, res, next) => {
+  // details split
+  const commaSepareteDetails = req.body.product_more_details.split("|");
+  let equalSeparateDetails = {};
+  for (let i = 0; i < commaSepareteDetails.length; i++) {
+    const singleEqualSeparateDetail = commaSepareteDetails[i].split("=");
+    equalSeparateDetails[singleEqualSeparateDetail[0]] = singleEqualSeparateDetail[1];
+  }
+  req.body.product_more_details = equalSeparateDetails;
+  // image array create
   req.body.img = [];
   for (let i = 0; i < req.files.length; i++) {
     req.body.img.push("http://localhost:5000/uploads/products/" + req.files[i].filename);
   }
-  if (req.body.feature === "true") {
-    req.body.feature = true;
+  if (req.body.featured === "true") {
+    req.body.featured = true;
   } else {
-    req.body.feature = false;
+    req.body.featured = false;
   }
-  // console.log(req.body);
+
+  req.body.quantity = Number(req.body.quantity);
+  req.body.price = Number(req.body.price);
+  req.body.discount = Number(req.body.discount);
+  console.log(req.body);
   const newProduct = new Products(req.body);
   try {
     const savedProduct = await newProduct.save();
@@ -32,8 +45,26 @@ export const getProducts = async (req, res, next) => {
 export const getCategorizedProducts = async (req, res, next) => {
   try {
     const categorizedProducts = await Products.find({ category: req.query.category, sub_category: req.query.sub_category });
-    console.log(categorizedProducts);
     res.status(200).json(categorizedProducts);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getLatestProducts = async (req, res, next) => {
+  try {
+    const todayDate = new Date();
+    const latestMaximumDate = new Date(new Date().setDate(todayDate.getDate() - 30));
+    const latestProduct = await Products.find({ createdAt: { $gt: latestMaximumDate } });
+    res.status(200).json(latestProduct);
+  } catch (err) {
+    next(err);
+  }
+};
+export const getFeaturedProducts = async (req, res, next) => {
+  try {
+    const featuredProduct = await Products.find({ featured: true });
+    res.status(200).json(featuredProduct);
   } catch (err) {
     next(err);
   }
