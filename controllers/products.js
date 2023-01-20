@@ -42,6 +42,30 @@ export const getProducts = async (req, res, next) => {
     next(err);
   }
 };
+
+export const getSearchedProducts = async (req, res, next) => {
+  const search_string = req.query.name;
+  try {
+    const name = req.query.name || "";
+    const nameFilter = name ? { name: { $regex: name, $options: "i" } } : {};
+    const searchedProductsByName = await Products.find({
+      ...nameFilter,
+    });
+    const categoryFilter = name ? { category: { $regex: name, $options: "i" } } : {};
+    const searchedProductsByCategory = await Products.find({
+      ...categoryFilter,
+    });
+    const subcategoryFilter = name ? { sub_category: { $regex: name, $options: "i" } } : {};
+    const searchedProductsBySubCategory = await Products.find({
+      ...subcategoryFilter,
+    });
+
+    const allSearchedProducts = searchedProductsByName.concat(searchedProductsByCategory, searchedProductsBySubCategory);
+    res.status(200).json(allSearchedProducts);
+  } catch (err) {
+    next(err);
+  }
+};
 export const getCategorizedProducts = async (req, res, next) => {
   try {
     const categorizedProducts = await Products.find({ category: req.query.category, sub_category: req.query.sub_category });
