@@ -1,7 +1,6 @@
 import express from "express";
 import { updateUser, deleteUser, getUser, getUsers } from "../controllers/users.js";
 import { verifyAdmin, verifyToken, verifyUser } from "../utils/verifyToken.js";
-
 const router = express.Router();
 
 // router.get("/checkauthentication", verifyToken, (req,res,next)=>{
@@ -27,5 +26,4 @@ router.get("/:id", verifyUser, getUser);
 
 //GET ALL
 router.get("/", verifyAdmin, getUsers);
-
 export default router;

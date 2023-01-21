@@ -7,12 +7,13 @@ export const register = async (req, res, next) => {
   try {
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(req.body.password, salt);
-
+    const isAdmin = req.body.isAdmin === "true" ? true : false;
     const newUser = new Users({
       ...req.body,
+      isAdmin: isAdmin,
       password: hash,
     });
-
+    console.log(newUser);
     await newUser.save();
     res.status(200).send("Users has been created.");
   } catch (err) {
@@ -21,7 +22,7 @@ export const register = async (req, res, next) => {
 };
 export const login = async (req, res, next) => {
   try {
-    const user = await Users.findOne({ username: req.body.username });
+    const user = await Users.findOne({ email: req.body.email });
     if (!user) return next(createError(404, "Users not found!"));
 
     const isPasswordCorrect = await bcrypt.compare(req.body.password, user.password);
@@ -35,7 +36,7 @@ export const login = async (req, res, next) => {
         httpOnly: true,
       })
       .status(200)
-      .json({ details: { ...otherDetails }, isAdmin });
+      .json({ details: { ...otherDetails }, isAdmin, token });
   } catch (err) {
     next(err);
   }

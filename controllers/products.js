@@ -24,7 +24,6 @@ export const createProduct = async (req, res, next) => {
   req.body.quantity = Number(req.body.quantity);
   req.body.price = Number(req.body.price);
   req.body.discount = Number(req.body.discount);
-  console.log(req.body);
   const newProduct = new Products(req.body);
   try {
     const savedProduct = await newProduct.save();

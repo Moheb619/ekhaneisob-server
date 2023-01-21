@@ -7,8 +7,18 @@
     <title>Document</title>
   </head>
   <body>
-    <div></div>
-    <form id="form" style="display: flex; flex-direction: column; width: 500px; margin: 0 auto">
+    <form id="form" style="display: flex; flex-direction: column; width: 500px; margin: 0 auto" enctype="application/x-www-form-urlencoded">
+      <input type="text" name="myName" placeholder="Name" id="pusername" />
+      <input type="email" name="myEmail" placeholder="Email" id="pemail" />
+      <input type="number" name="myPhone" placeholder="Phone" id="pphone" />
+      <input type="password" name="myPassword" placeholder="Password" id="ppassword" />
+      <select name="myIsAdmin" id="pisadmin">
+        <option value="true">True</option>
+        <option value="false">False</option>
+      </select>
+      <button type="submit">Submit</button>
+    </form>
+    <!-- <form id="form" style="display: flex; flex-direction: column; width: 500px; margin: 0 auto">
       <input type="text" name="myName" placeholder="Name" id="pname" />
       <input class="choose-file-btn" type="file" name="myImage" placeholder="Image" id="pimage" multiple />
       <input type="text" name="myShortDesc" placeholder="ShortDescription" id="pshortdesc" />
@@ -36,7 +46,7 @@
       <input type="checkbox" name="myFeature" placeholder="Feature" id="pfeature" />
       <input type="number" name="myDiscount" placeholder="Discount" id="pdiscount" />
       <button type="submit">Submit</button>
-    </form>
+    </form> -->
 
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
@@ -45,7 +55,7 @@
       referrerpolicy="no-referrer"
     ></script>
 
-    <script>
+    <!-- <script>
       fetch("http://localhost:5000/api/categories/get-categories", { method: "GET" })
         .then((res) => res.json())
         .then((data) => {
@@ -85,6 +95,33 @@
         formData.append("discount", discount);
 
         fetch("http://localhost:5000/api/products/create-product", { method: "POST", body: formData })
+          .then((res) => res.json())
+          .then((data) => console.log(data));
+      });
+    </script> -->
+
+    <script>
+      const form = document.querySelector("#form");
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        var formData = new FormData();
+        const username = document.getElementById("pusername").value;
+        const email = document.getElementById("pemail").value;
+        const phone = document.getElementById("pphone").value;
+        const password = document.getElementById("ppassword").value;
+        const isAdmin = document.getElementById("pisadmin").value;
+
+        formData.append("username", username);
+        formData.append("email", email);
+        formData.append("phone", phone);
+        formData.append("password", password);
+        formData.append("isAdmin", isAdmin);
+
+        for (const [key, value] of formData) {
+          console.log("»", key, value);
+        }
+        fetch("http://localhost:5000/api/auths/register", { method: "POST", body: formData })
           .then((res) => res.json())
           .then((data) => console.log(data));
       });

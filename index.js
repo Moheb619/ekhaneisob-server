@@ -11,8 +11,8 @@ import fs from "fs";
 import { fileURLToPath } from "url";
 
 // import routes start
-import authRoute from "./routes/auth.js";
 import usersRouter from "./routes/users.js";
+import authRoute from "./routes/auth.js";
 import productsRouter from "./routes/products.js";
 import categoriesRouter from "./routes/categories.js";
 // import routes end
@@ -63,8 +63,8 @@ const upload = multer({ storage: storage });
 // File Upload End
 
 // All routes start
-app.use("/api/auth", authRoute);
 app.use("/api/users", usersRouter);
+app.use("/api/auth", authRoute);
 app.use("/api/products", productsRouter);
 app.use("/api/categories", categoriesRouter);
 // All routes end
