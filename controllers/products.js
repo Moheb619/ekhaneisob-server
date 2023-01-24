@@ -33,6 +33,14 @@ export const createProduct = async (req, res, next) => {
   }
 };
 
+export const getProduct = async (req, res, next) => {
+  try {
+    const product = await Products.findById(req.params.id);
+    res.status(200).json(product);
+  } catch (err) {
+    next(err);
+  }
+};
 export const getProducts = async (req, res, next) => {
   try {
     const products = await Products.find({});

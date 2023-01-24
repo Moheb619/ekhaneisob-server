@@ -49,7 +49,12 @@ mongoose.connection.on("disconnected", () => {
 
 //middlewares use start
 app.use(express.static(__dirname + "/public/"));
-app.use(cors());
+app.use(
+  cors({
+    credentials: true,
+    origin: ["http://localhost:4200"],
+  })
+);
 app.use(cookieParser());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
