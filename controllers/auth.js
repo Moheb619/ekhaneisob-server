@@ -1,7 +1,8 @@
 import Users from "../models/Users.js";
 import bcrypt from "bcryptjs";
 import { createError } from "../utils/errors.js";
-import jwt from "jsonwebtoken";
+import jwt, { verify } from "jsonwebtoken";
+import { verifyToken, verifyUser } from "../utils/verifyToken.js";
 
 export const register = async (req, res, next) => {
   try {
@@ -13,7 +14,6 @@ export const register = async (req, res, next) => {
       isAdmin: isAdmin,
       password: hash,
     });
-    console.log(newUser);
     await newUser.save();
     res.status(200).send("Users has been created.");
   } catch (err) {
@@ -28,18 +28,68 @@ export const login = async (req, res, next) => {
     const isPasswordCorrect = await bcrypt.compare(req.body.password, user.password);
     if (!isPasswordCorrect) return next(createError(400, "Wrong password or username!"));
 
-    const token = jwt.sign({ id: user._id, isAdmin: user.isAdmin }, process.env.JWT);
+    const token = jwt.sign({ id: user._id, isAdmin: user.isAdmin }, process.env.JWT, {
+      expiresIn: "45m", // expires in 45 miniutes
+    });
+    const refresh_token = jwt.sign({ id: user._id, isAdmin: user.isAdmin }, process.env.REFRESH_JWT, {
+      expiresIn: "30d", // expires in 30 days
+    });
 
     const { password, isAdmin, ...otherDetails } = user._doc;
-    res.cookie("access_token", token, {
+    res.cookie("refresh_token", refresh_token, {
+      expires: new Date(Date.now() + 2592000000),
       httpOnly: true,
+      secure: true,
     });
     res
-      .cookie("id", user.id, {
-        httpOnly: true,
+      .cookie("access_token", token, {
+        expires: new Date(Date.now() + 2700000),
       })
       .status(200)
-      .json({ id: user.id, message: "Successfully Logged Id" });
+      .json({ id: user._id, message: "Successfully Logged Id" });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const access_token_regenerate = async (req, res, next) => {
+  try {
+    const token = jwt.sign({ id: req.user._id, isAdmin: req.user.isAdmin }, process.env.JWT, {
+      expiresIn: "45m", // expires in 45 miniutes
+    });
+    const refresh_token = jwt.sign({ id: req.user._id, isAdmin: req.user.isAdmin }, process.env.REFRESH_JWT, {
+      expiresIn: "30d", // expires in 30 days
+    });
+
+    res.cookie("refresh_token", refresh_token, {
+      expires: new Date(Date.now() + 2592000000),
+      httpOnly: true,
+      secure: true,
+    });
+    res.cookie("access_token", token, {
+      expires: new Date(Date.now() + 2700000),
+    });
+    next();
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const logout = async (req, res, next) => {
+  const token = "expired";
+  const refresh_token = "expired";
+  try {
+    res.cookie("refresh_token", refresh_token, {
+      expires: new Date(Date.now() - 60000),
+      httpOnly: true,
+      secure: true,
+    });
+    res
+      .cookie("access_token", token, {
+        expires: new Date(Date.now() - 60000),
+      })
+      .status(200)
+      .json({ message: "Logged Out Successfully" });
   } catch (err) {
     next(err);
   }
