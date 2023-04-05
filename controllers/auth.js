@@ -49,7 +49,7 @@ export const login = async (req, res, next) => {
         secure: true,
       })
       .status(200)
-      .json({ message: "Successfully Logged Id" });
+      .json({ id: user._id, message: "Successfully Logged Id" });
   } catch (err) {
     next(err);
   }
@@ -70,26 +70,13 @@ export const access_token_regenerate = async (req, res, next) => {
       secure: true,
       sameSite: "strict",
     });
-    res.cookie("access_token", token, {
-      expires: new Date(Date.now() + 2700000),
-      secure: true,
-    });
+    res
+      .cookie("access_token", token, {
+        expires: new Date(Date.now() + 2700000),
+        secure: true,
+      })
+      .json({ id: req.user._id });
     next();
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const getTokenValue = async (req, res, next) => {
-  try {
-    verifyToken(req, res, () => {
-      if (req.user) {
-        res.status(200).json({ user: req.user });
-        next();
-      } else {
-        return next(createError(403, "You are not authorized!"));
-      }
-    });
   } catch (err) {
     next(err);
   }

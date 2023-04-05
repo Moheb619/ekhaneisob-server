@@ -15,6 +15,7 @@ import usersRouter from "./routes/users.js";
 import authRoute from "./routes/auth.js";
 import productsRouter from "./routes/products.js";
 import categoriesRouter from "./routes/categories.js";
+import cartsRouter from "./routes/carts.js";
 // import routes end
 
 // Initialize express to app
@@ -78,6 +79,7 @@ app.use("/api/users", usersRouter);
 app.use("/api/auth", authRoute);
 app.use("/api/products", productsRouter);
 app.use("/api/categories", categoriesRouter);
+app.use("/api/carts", cartsRouter);
 // All routes end
 
 app.use((err, req, res, next) => {
