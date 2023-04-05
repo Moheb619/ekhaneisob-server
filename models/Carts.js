@@ -13,6 +13,14 @@ const UsersSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    color: {
+      type: String,
+      default: "",
+    },
+    size: {
+      type: String,
+      default: "",
+    },
   },
   { timestamps: true }
 );

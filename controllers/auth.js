@@ -8,13 +8,14 @@ export const register = async (req, res, next) => {
   try {
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(req.body.password, salt);
-    const isAdmin = req.body.isAdmin === "true" ? true : false;
+    const isAdmin = false;
     const newUser = new Users({
       ...req.body,
       isAdmin: isAdmin,
       password: hash,
     });
     await newUser.save();
+    await login(req, res, next);
     res.status(200).send("Users has been created.");
   } catch (err) {
     next(err);
@@ -40,13 +41,15 @@ export const login = async (req, res, next) => {
       expires: new Date(Date.now() + 2592000000),
       httpOnly: true,
       secure: true,
+      sameSite: "strict",
     });
     res
       .cookie("access_token", token, {
         expires: new Date(Date.now() + 2700000),
+        secure: true,
       })
       .status(200)
-      .json({ id: user._id, message: "Successfully Logged Id" });
+      .json({ message: "Successfully Logged Id" });
   } catch (err) {
     next(err);
   }
@@ -65,11 +68,28 @@ export const access_token_regenerate = async (req, res, next) => {
       expires: new Date(Date.now() + 2592000000),
       httpOnly: true,
       secure: true,
+      sameSite: "strict",
     });
     res.cookie("access_token", token, {
       expires: new Date(Date.now() + 2700000),
+      secure: true,
     });
     next();
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getTokenValue = async (req, res, next) => {
+  try {
+    verifyToken(req, res, () => {
+      if (req.user) {
+        res.status(200).json({ user: req.user });
+        next();
+      } else {
+        return next(createError(403, "You are not authorized!"));
+      }
+    });
   } catch (err) {
     next(err);
   }
@@ -83,10 +103,12 @@ export const logout = async (req, res, next) => {
       expires: new Date(Date.now() - 60000),
       httpOnly: true,
       secure: true,
+      sameSite: "strict",
     });
     res
       .cookie("access_token", token, {
         expires: new Date(Date.now() - 60000),
+        secure: true,
       })
       .status(200)
       .json({ message: "Logged Out Successfully" });
