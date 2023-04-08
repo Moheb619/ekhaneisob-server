@@ -12,3 +12,11 @@ export const addToCart = async (req, res, next) => {
     next(err);
   }
 };
+export const getCarts = async (req, res, next) => {
+  try {
+    const carts = await Carts.find({ user_id: req.params.id });
+    res.status(200).json({ cart: carts });
+  } catch (err) {
+    next(err);
+  }
+};
